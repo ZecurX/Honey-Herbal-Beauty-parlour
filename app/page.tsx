@@ -1,65 +1,88 @@
-import Image from "next/image";
+'use client';
+
+import { useEffect, useCallback } from 'react';
+import Navbar from '@/components/public/Navbar';
+import Hero from '@/components/public/Hero';
+import Services from '@/components/public/Services';
+import AboutUsSection from '@/components/ui/about-us-section';
+import Gallery from '@/components/public/Gallery';
+import { StaggerTestimonials } from '@/components/ui/stagger-testimonials';
+import Offers from '@/components/public/Offers';
+import { StackedCircularFooter } from '@/components/ui/stacked-circular-footer';
 
 export default function Home() {
+  // Scroll reveal effect using Intersection Observer for better reliability
+  const initRevealAnimations = useCallback(() => {
+    const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
+
+    // Create an Intersection Observer for reliable visibility detection
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      },
+      {
+        root: null,
+        rootMargin: '0px 0px -100px 0px', // Trigger when element is 100px from entering viewport
+        threshold: 0.1, // Trigger when at least 10% is visible
+      }
+    );
+
+    // Observe all reveal elements
+    revealElements.forEach((el) => observer.observe(el));
+
+    // Also run a fallback scroll-based check for elements already in view
+    const checkVisibility = () => {
+      const windowHeight = window.innerHeight;
+      revealElements.forEach((el) => {
+        const elementTop = el.getBoundingClientRect().top;
+        const elementVisible = 100;
+
+        if (elementTop < windowHeight - elementVisible) {
+          el.classList.add('visible');
+        }
+      });
+    };
+
+    // Run visibility check after a small delay to ensure DOM is ready
+    requestAnimationFrame(() => {
+      checkVisibility();
+      // Double-check after a frame to catch any elements that might have been missed
+      requestAnimationFrame(checkVisibility);
+    });
+
+    // Also listen to scroll events as a fallback
+    window.addEventListener('scroll', checkVisibility, { passive: true });
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('scroll', checkVisibility);
+    };
+  }, []);
+
+  useEffect(() => {
+    // Small delay to ensure hydration is complete
+    const timeoutId = setTimeout(() => {
+      const cleanup = initRevealAnimations();
+      return cleanup;
+    }, 50);
+
+    return () => clearTimeout(timeoutId);
+  }, [initRevealAnimations]);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <main>
+      <Navbar />
+      <Hero />
+      <Services />
+      <AboutUsSection />
+      <Gallery />
+      <StaggerTestimonials />
+      <Offers />
+      <StackedCircularFooter />
+    </main>
   );
 }
