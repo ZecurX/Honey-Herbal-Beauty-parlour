@@ -3,6 +3,19 @@ import { supabase } from '@/lib/supabase';
 
 export const dynamic = 'force-dynamic';
 
+// Transform snake_case to camelCase for frontend
+function transformTestimonial(item: any) {
+    return {
+        id: item.id,
+        name: item.name,
+        role: item.role,
+        testimonial: item.testimonial,
+        rating: item.rating,
+        imageUrl: item.image_url,
+        createdAt: item.created_at
+    };
+}
+
 // GET all testimonials
 export async function GET() {
     const { data: testimonials, error } = await supabase
@@ -14,7 +27,10 @@ export async function GET() {
         return NextResponse.json({ success: false, error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json({ success: true, data: testimonials });
+    // Transform to camelCase
+    const transformedTestimonials = (testimonials || []).map(transformTestimonial);
+
+    return NextResponse.json({ success: true, data: transformedTestimonials });
 }
 
 // POST create new testimonial
@@ -48,7 +64,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ success: false, error: error.message }, { status: 500 });
         }
 
-        return NextResponse.json({ success: true, data }, { status: 201 });
+        return NextResponse.json({ success: true, data: transformTestimonial(data) }, { status: 201 });
     } catch {
         return NextResponse.json(
             { success: false, error: 'Invalid request body' },

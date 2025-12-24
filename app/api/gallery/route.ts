@@ -3,6 +3,17 @@ import { supabase } from '@/lib/supabase';
 
 export const dynamic = 'force-dynamic';
 
+// Transform snake_case to camelCase for frontend
+function transformGalleryItem(item: any) {
+    return {
+        id: item.id,
+        imageUrl: item.image_url,
+        caption: item.caption,
+        category: item.category,
+        createdAt: item.created_at
+    };
+}
+
 // GET all gallery items
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
@@ -23,7 +34,10 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ success: false, error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json({ success: true, data: items || [] });
+    // Transform to camelCase
+    const transformedItems = (items || []).map(transformGalleryItem);
+
+    return NextResponse.json({ success: true, data: transformedItems });
 }
 
 // POST new gallery item
@@ -55,7 +69,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ success: false, error: error.message }, { status: 500 });
         }
 
-        return NextResponse.json({ success: true, data }, { status: 201 });
+        return NextResponse.json({ success: true, data: transformGalleryItem(data) }, { status: 201 });
     } catch {
         return NextResponse.json(
             { success: false, error: 'Invalid request body' },

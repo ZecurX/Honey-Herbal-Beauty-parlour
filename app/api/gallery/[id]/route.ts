@@ -1,6 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 
+// Transform snake_case to camelCase for frontend
+function transformGalleryItem(item: any) {
+    return {
+        id: item.id,
+        imageUrl: item.image_url,
+        caption: item.caption,
+        category: item.category,
+        createdAt: item.created_at
+    };
+}
+
 // GET single gallery item
 export async function GET(
     request: NextRequest,
@@ -21,7 +32,7 @@ export async function GET(
         );
     }
 
-    return NextResponse.json({ success: true, data: item });
+    return NextResponse.json({ success: true, data: transformGalleryItem(item) });
 }
 
 // PUT update gallery item
@@ -53,7 +64,7 @@ export async function PUT(
             );
         }
 
-        return NextResponse.json({ success: true, data });
+        return NextResponse.json({ success: true, data: transformGalleryItem(data) });
     } catch {
         return NextResponse.json(
             { success: false, error: 'Invalid request body' },

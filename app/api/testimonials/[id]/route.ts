@@ -1,6 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 
+// Transform snake_case to camelCase for frontend
+function transformTestimonial(item: any) {
+    return {
+        id: item.id,
+        name: item.name,
+        role: item.role,
+        testimonial: item.testimonial,
+        rating: item.rating,
+        imageUrl: item.image_url,
+        createdAt: item.created_at
+    };
+}
+
 // GET single testimonial
 export async function GET(
     request: NextRequest,
@@ -21,7 +34,7 @@ export async function GET(
         );
     }
 
-    return NextResponse.json({ success: true, data: testimonial });
+    return NextResponse.json({ success: true, data: transformTestimonial(testimonial) });
 }
 
 // PUT update testimonial
@@ -55,7 +68,7 @@ export async function PUT(
             );
         }
 
-        return NextResponse.json({ success: true, data });
+        return NextResponse.json({ success: true, data: transformTestimonial(data) });
     } catch {
         return NextResponse.json(
             { success: false, error: 'Invalid request body' },
