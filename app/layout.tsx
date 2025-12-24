@@ -6,6 +6,11 @@ export const metadata: Metadata = {
   title: "Honey Herbal Beauty Parlor | Premium Herbal Beauty Services",
   description: "Experience the power of nature for your beauty at Honey Herbal Beauty Parlor. We offer herbal facials, hair care, bridal makeup, and more using 100% organic products.",
   keywords: "beauty parlor, herbal, organic, facial, hair care, bridal makeup, Mumbai",
+  icons: {
+    icon: "/logo.jpg",
+    shortcut: "/logo.jpg",
+    apple: "/logo.jpg",
+  },
 };
 
 export default function RootLayout({
