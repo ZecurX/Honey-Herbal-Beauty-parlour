@@ -145,7 +145,7 @@ export const Interactive3DPackageCard = React.forwardRef<
                             style={{ transform: "translateZ(50px)" }}
                             className="flex items-center gap-3"
                         >
-                            <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center ring-1 ring-inset ring-white/30">
+                            <div className="w-12 h-12 rounded-full bg-white/30 flex items-center justify-center ring-1 ring-inset ring-white/30">
                                 <Gift className="w-6 h-6 text-white" />
                             </div>
                         </motion.div>

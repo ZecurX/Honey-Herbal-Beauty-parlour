@@ -247,13 +247,13 @@ export const StaggerTestimonials: React.FC = () => {
                         );
                     })}
 
-                    {/* Navigation Buttons */}
+                    {/* Navigation Buttons - No backdrop blur for performance */}
                     <div className="absolute bottom-0 left-1/2 flex -translate-x-1/2 gap-3">
                         <button
                             onClick={() => handleMove(-1)}
                             className={cn(
                                 "flex h-14 w-14 items-center justify-center rounded-full text-2xl transition-all duration-300",
-                                "bg-white/90 backdrop-blur-sm border-2 border-secondary/30 hover:bg-primary hover:text-white hover:border-primary",
+                                "bg-white border-2 border-secondary/30 hover:bg-primary hover:text-white hover:border-primary",
                                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2",
                                 "shadow-lg hover:shadow-xl hover:scale-105"
                             )}
@@ -265,7 +265,7 @@ export const StaggerTestimonials: React.FC = () => {
                             onClick={() => handleMove(1)}
                             className={cn(
                                 "flex h-14 w-14 items-center justify-center rounded-full text-2xl transition-all duration-300",
-                                "bg-white/90 backdrop-blur-sm border-2 border-secondary/30 hover:bg-primary hover:text-white hover:border-primary",
+                                "bg-white border-2 border-secondary/30 hover:bg-primary hover:text-white hover:border-primary",
                                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2",
                                 "shadow-lg hover:shadow-xl hover:scale-105"
                             )}

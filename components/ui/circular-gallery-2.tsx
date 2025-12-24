@@ -511,7 +511,9 @@ class App {
         this.renderer = new Renderer({
             alpha: true,
             antialias: true,
-            dpr: Math.min(window.devicePixelRatio || 1, 2),
+            // Cap DPR at 1.5 for better performance on high-DPI screens
+            dpr: Math.min(window.devicePixelRatio || 1, 1.5),
+            powerPreference: 'low-power',
         });
         this.gl = this.renderer.gl;
         this.gl.clearColor(0, 0, 0, 0);
@@ -529,9 +531,10 @@ class App {
     }
 
     createGeometry() {
+        // Reduced segment count for better scroll performance
         this.planeGeometry = new Plane(this.gl, {
-            heightSegments: 50,
-            widthSegments: 100,
+            heightSegments: 20,
+            widthSegments: 40,
         });
     }
 

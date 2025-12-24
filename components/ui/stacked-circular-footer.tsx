@@ -78,7 +78,7 @@ function StackedCircularFooter() {
                 {/* Main Content Grid - Contact Form + Info */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
                     {/* Contact Form */}
-                    <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-secondary/20">
+                    <div className="bg-white/5 rounded-2xl p-8 border border-secondary/20">
                         <h3 className="font-display text-xl font-semibold text-white mb-6 flex items-center gap-2">
                             <MessageCircle className="w-5 h-5 text-secondary" />
                             Send Us a Message
@@ -210,7 +210,7 @@ function StackedCircularFooter() {
                             {/* Phone */}
                             <a
                                 href={`tel:${settings.phone.replace(/\s/g, '')}`}
-                                className="group flex items-center p-5 bg-white/5 backdrop-blur-sm rounded-xl border border-secondary/20 hover:border-primary transition-all duration-300"
+                                className="group flex items-center p-5 bg-white/10 rounded-xl border border-secondary/20 hover:border-primary transition-all duration-300"
                             >
                                 <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mr-4 group-hover:bg-primary transition-colors">
                                     <Phone className="w-5 h-5 text-secondary group-hover:text-white" />
@@ -226,7 +226,7 @@ function StackedCircularFooter() {
                                 href={`https://wa.me/${settings.whatsapp.replace(/[^0-9]/g, '')}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="group flex items-center p-5 bg-white/5 backdrop-blur-sm rounded-xl border border-secondary/20 hover:border-green-500 transition-all duration-300"
+                                className="group flex items-center p-5 bg-white/10 rounded-xl border border-secondary/20 hover:border-green-500 transition-all duration-300"
                             >
                                 <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center mr-4 group-hover:bg-green-500 transition-colors">
                                     <svg className="w-5 h-5 text-green-400 group-hover:text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -242,7 +242,7 @@ function StackedCircularFooter() {
                             {/* Email */}
                             <a
                                 href={`mailto:${settings.email}`}
-                                className="group flex items-center p-5 bg-white/5 backdrop-blur-sm rounded-xl border border-secondary/20 hover:border-primary transition-all duration-300"
+                                className="group flex items-center p-5 bg-white/10 rounded-xl border border-secondary/20 hover:border-primary transition-all duration-300"
                             >
                                 <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mr-4 group-hover:bg-primary transition-colors">
                                     <Mail className="w-5 h-5 text-secondary group-hover:text-white" />
@@ -254,7 +254,7 @@ function StackedCircularFooter() {
                             </a>
 
                             {/* Working Hours */}
-                            <div className="flex items-center p-5 bg-white/5 backdrop-blur-sm rounded-xl border border-secondary/20">
+                            <div className="flex items-center p-5 bg-white/10 rounded-xl border border-secondary/20">
                                 <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mr-4">
                                     <Clock className="w-5 h-5 text-secondary" />
                                 </div>
@@ -266,7 +266,7 @@ function StackedCircularFooter() {
                         </div>
 
                         {/* Address */}
-                        <div className="bg-white/5 backdrop-blur-sm rounded-xl p-5 border border-secondary/20">
+                        <div className="bg-white/10 rounded-xl p-5 border border-secondary/20">
                             <div className="flex items-start">
                                 <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mr-4 shrink-0">
                                     <MapPin className="w-5 h-5 text-secondary" />
@@ -287,7 +287,7 @@ function StackedCircularFooter() {
                         </div>
 
                         {/* Social Media */}
-                        <div className="bg-white/5 backdrop-blur-sm rounded-xl p-5 border border-secondary/20">
+                        <div className="bg-white/10 rounded-xl p-5 border border-secondary/20">
                             <h4 className="text-white/80 text-sm mb-4">Follow Us</h4>
                             <div className="flex space-x-3">
                                 <Button

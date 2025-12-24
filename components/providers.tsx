@@ -8,23 +8,26 @@ import { EnquiryProvider } from '@/context/EnquiryContext';
 import { ServicesProvider } from '@/context/ServicesContext';
 import { PackagesProvider } from '@/context/PackagesContext';
 import { TestimonialsProvider } from '@/context/TestimonialsContext';
+import { SmoothScrollProvider } from '@/components/providers/SmoothScrollProvider';
 
 export function Providers({ children }: { children: ReactNode }) {
     return (
-        <SettingsProvider>
-            <ServicesProvider>
-                <PackagesProvider>
-                    <TestimonialsProvider>
-                        <GalleryProvider>
-                            <EnquiryProvider>
-                                <AuthProvider>
-                                    {children}
-                                </AuthProvider>
-                            </EnquiryProvider>
-                        </GalleryProvider>
-                    </TestimonialsProvider>
-                </PackagesProvider>
-            </ServicesProvider>
-        </SettingsProvider>
+        <SmoothScrollProvider>
+            <SettingsProvider>
+                <ServicesProvider>
+                    <PackagesProvider>
+                        <TestimonialsProvider>
+                            <GalleryProvider>
+                                <EnquiryProvider>
+                                    <AuthProvider>
+                                        {children}
+                                    </AuthProvider>
+                                </EnquiryProvider>
+                            </GalleryProvider>
+                        </TestimonialsProvider>
+                    </PackagesProvider>
+                </ServicesProvider>
+            </SettingsProvider>
+        </SmoothScrollProvider>
     );
 }

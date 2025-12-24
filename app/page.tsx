@@ -11,7 +11,7 @@ import Offers from '@/components/public/Offers';
 import { StackedCircularFooter } from '@/components/ui/stacked-circular-footer';
 
 export default function Home() {
-  // Scroll reveal effect using Intersection Observer for better reliability
+  // Scroll reveal effect using Intersection Observer - optimized for performance
   const initRevealAnimations = useCallback(() => {
     const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
 
@@ -21,45 +21,35 @@ export default function Home() {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add('visible');
+            // Unobserve once visible for better performance
+            observer.unobserve(entry.target);
           }
         });
       },
       {
         root: null,
-        rootMargin: '0px 0px -100px 0px', // Trigger when element is 100px from entering viewport
-        threshold: 0.1, // Trigger when at least 10% is visible
+        rootMargin: '0px 0px -50px 0px', // Trigger slightly earlier
+        threshold: 0.05, // Lower threshold for faster response
       }
     );
 
     // Observe all reveal elements
     revealElements.forEach((el) => observer.observe(el));
 
-    // Also run a fallback scroll-based check for elements already in view
-    const checkVisibility = () => {
+    // Initial check for elements already in viewport (no scroll listener needed)
+    requestAnimationFrame(() => {
       const windowHeight = window.innerHeight;
       revealElements.forEach((el) => {
         const elementTop = el.getBoundingClientRect().top;
-        const elementVisible = 100;
-
-        if (elementTop < windowHeight - elementVisible) {
+        if (elementTop < windowHeight - 50) {
           el.classList.add('visible');
+          observer.unobserve(el);
         }
       });
-    };
-
-    // Run visibility check after a small delay to ensure DOM is ready
-    requestAnimationFrame(() => {
-      checkVisibility();
-      // Double-check after a frame to catch any elements that might have been missed
-      requestAnimationFrame(checkVisibility);
     });
-
-    // Also listen to scroll events as a fallback
-    window.addEventListener('scroll', checkVisibility, { passive: true });
 
     return () => {
       observer.disconnect();
-      window.removeEventListener('scroll', checkVisibility);
     };
   }, []);
 

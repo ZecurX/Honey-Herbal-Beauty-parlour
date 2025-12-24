@@ -511,8 +511,8 @@ function StatCounter({ icon, value, label, suffix, delay }: StatCounterProps) {
 
     return (
         <motion.div
-            className="backdrop-blur-sm p-6 rounded-2xl flex flex-col items-center text-center group transition-colors duration-300"
-            style={{ background: "rgba(255, 255, 255, 0.6)" }}
+            className="p-6 rounded-2xl flex flex-col items-center text-center group transition-colors duration-300"
+            style={{ background: "rgba(255, 255, 255, 0.8)" }}
             variants={{
                 hidden: { opacity: 0, y: 20 },
                 visible: {

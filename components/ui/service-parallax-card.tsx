@@ -84,7 +84,7 @@ export const ServiceParallaxCard = React.forwardRef<
             >
                 <div
                     style={{ transform: "translateZ(30px)", transformStyle: "preserve-3d" }}
-                    className="relative flex flex-col h-full rounded-2xl bg-white/90 backdrop-blur-sm p-8 border border-primary/10 shadow-lg hover:shadow-2xl transition-shadow duration-500 overflow-hidden group"
+                    className="relative flex flex-col h-full rounded-2xl bg-white p-8 border border-primary/10 shadow-lg hover:shadow-2xl transition-shadow duration-500 overflow-hidden group"
                 >
                     {/* Animated Glow Effect */}
                     <motion.div

@@ -51,6 +51,21 @@
 /* Base Styles */
 html {
   scroll-behavior: smooth;
+  /* Optimize scrolling performance */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 body {
@@ -161,15 +176,16 @@ h6 {
   width: 100%;
 }
 
-/* Glassmorphism Cards */
+/* Glassmorphism Cards - Performance optimized (backdrop-filter DISABLED) */
 .glass-card {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.95);
+  /* Higher opacity to compensate */
+  /* backdrop-filter: blur(12px); - DISABLED for scroll perf */
+  border: 1px solid rgba(255, 255, 255, 0.6);
   border-radius: 24px;
   box-shadow: var(--shadow-soft);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  contain: layout style paint;
 }
 
 .glass-card:hover {
@@ -179,9 +195,9 @@ h6 {
 }
 
 .glass-card-dark {
-  background: rgba(26, 26, 26, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(26, 26, 26, 0.95);
+  /* Higher opacity, no blur */
+  /* backdrop-filter: blur(20px); - DISABLED for scroll perf */
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 24px;
 }
@@ -225,21 +241,23 @@ h6 {
   border-radius: 2px;
 }
 
-/* Floating Animation */
+/* Floating Animation - GPU optimized */
 @keyframes float {
 
   0%,
   100% {
-    transform: translateY(0px);
+    transform: translateY(0px) translateZ(0);
   }
 
   50% {
-    transform: translateY(-10px);
+    transform: translateY(-10px) translateZ(0);
   }
 }
 
 .animate-float {
   animation: float 6s ease-in-out infinite;
+  will-change: transform;
+  contain: layout style;
 }
 
 /* Pulse Glow */
@@ -381,13 +399,19 @@ h6 {
       rgba(250, 248, 245, 0.9) 100%);
 }
 
-/* Decorative Elements */
+/* Decorative Elements - OPTIMIZED for scroll performance */
 .decoration-blob {
   position: absolute;
   border-radius: 50%;
-  filter: blur(60px);
-  opacity: 0.5;
+  filter: blur(30px);
+  /* Reduced from 60px for better performance */
+  opacity: 0.3;
+  /* Reduced opacity */
   pointer-events: none;
+  will-change: auto;
+  /* Let browser decide */
+  contain: strict;
+  /* CSS containment for performance */
 }
 
 .decoration-blob-primary {
@@ -513,6 +537,7 @@ h6 {
 
 /* ========================================
    HOLOGRAPHIC CARD STYLES - Honey Theme
+   Performance Optimized (no blur)
    ======================================== */
 .holographic-card {
   --x: 50%;
@@ -521,15 +546,14 @@ h6 {
   --bg-y: 50%;
 
   position: relative;
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.95);
+  /* Higher opacity, no blur */
+  /* backdrop-filter: blur(20px); - DISABLED for scroll perf */
   border-radius: 24px;
   border: 1px solid rgba(212, 135, 15, 0.2);
   overflow: hidden;
-  transition: box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: box-shadow 0.3s ease;
   transform-style: preserve-3d;
-  will-change: transform;
 }
 
 .holographic-card::before {
@@ -554,8 +578,7 @@ h6 {
 .holographic-card:hover {
   box-shadow:
     0 25px 50px -12px rgba(0, 0, 0, 0.15),
-    0 0 40px rgba(212, 135, 15, 0.2),
-    inset 0 0 80px rgba(245, 166, 35, 0.05);
+    0 0 40px rgba(212, 135, 15, 0.2);
 }
 
 .holographic-card .holo-content {
@@ -569,8 +592,8 @@ h6 {
   width: 150px;
   height: 150px;
   background: radial-gradient(circle,
-      rgba(212, 135, 15, 0.4) 0%,
-      rgba(196, 154, 26, 0.2) 30%,
+      rgba(212, 135, 15, 0.3) 0%,
+      rgba(196, 154, 26, 0.15) 30%,
       transparent 70%);
   border-radius: 50%;
   top: calc(var(--y) - 75px);
@@ -578,7 +601,7 @@ h6 {
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.3s ease;
-  filter: blur(20px);
+  /* filter: blur(20px); - DISABLED for scroll perf */
   z-index: 0;
 }
 
