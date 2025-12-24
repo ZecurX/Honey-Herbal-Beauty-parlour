@@ -20,11 +20,11 @@ const Navbar: React.FC = () => {
     }, []);
 
     const navLinks = [
-        { href: '#home', label: 'Home', isPage: false },
+        { href: '/', label: 'Home', isPage: true },
         { href: '/services', label: 'Services', isPage: true },
         { href: '/gallery', label: 'Gallery', isPage: true },
-        { href: '#offers', label: 'Offers', isPage: false },
-        { href: '#contact', label: 'Contact', isPage: false },
+        { href: '/#offers', label: 'Offers', isPage: true },
+        { href: '/#contact', label: 'Contact', isPage: true },
     ];
 
     const closeMobileMenu = () => setIsMobileMenuOpen(false);
@@ -39,7 +39,7 @@ const Navbar: React.FC = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between">
                     {/* Logo */}
-                    <a href="#home" className="flex items-center gap-3 group">
+                    <Link href="/" className="flex items-center gap-3 group">
                         <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-primary/20 group-hover:border-primary transition-colors">
                             <Image
                                 src="/logo.jpg"
@@ -53,30 +53,19 @@ const Navbar: React.FC = () => {
                             }`}>
                             Honey <span className="gradient-text">Herbal</span>
                         </span>
-                    </a>
+                    </Link>
 
                     {/* Desktop Navigation */}
                     <div className="hidden md:flex items-center gap-8">
                         {navLinks.map((link) => (
-                            link.isPage ? (
-                                <Link
-                                    key={link.href}
-                                    href={link.href}
-                                    className={`font-medium transition-colors duration-300 hover:text-primary ${isScrolled ? 'text-charcoal/80' : 'text-charcoal/80'
-                                        }`}
-                                >
-                                    {link.label}
-                                </Link>
-                            ) : (
-                                <a
-                                    key={link.href}
-                                    href={link.href}
-                                    className={`font-medium transition-colors duration-300 hover:text-primary ${isScrolled ? 'text-charcoal/80' : 'text-charcoal/80'
-                                        }`}
-                                >
-                                    {link.label}
-                                </a>
-                            )
+                            <Link
+                                key={link.href}
+                                href={link.href}
+                                className={`font-medium transition-colors duration-300 hover:text-primary ${isScrolled ? 'text-charcoal/80' : 'text-charcoal/80'
+                                    }`}
+                            >
+                                {link.label}
+                            </Link>
                         ))}
                         <a
                             href={`tel:${settings.phone?.replace(/\s/g, '') || ''}`}
@@ -124,25 +113,14 @@ const Navbar: React.FC = () => {
                 >
                     <div className="glass-card rounded-2xl p-4 space-y-2">
                         {navLinks.map((link) => (
-                            link.isPage ? (
-                                <Link
-                                    key={link.href}
-                                    href={link.href}
-                                    onClick={closeMobileMenu}
-                                    className="block px-4 py-3 rounded-xl font-medium text-charcoal/80 hover:bg-primary/10 hover:text-primary transition-colors"
-                                >
-                                    {link.label}
-                                </Link>
-                            ) : (
-                                <a
-                                    key={link.href}
-                                    href={link.href}
-                                    onClick={closeMobileMenu}
-                                    className="block px-4 py-3 rounded-xl font-medium text-charcoal/80 hover:bg-primary/10 hover:text-primary transition-colors"
-                                >
-                                    {link.label}
-                                </a>
-                            )
+                            <Link
+                                key={link.href}
+                                href={link.href}
+                                onClick={closeMobileMenu}
+                                className="block px-4 py-3 rounded-xl font-medium text-charcoal/80 hover:bg-primary/10 hover:text-primary transition-colors"
+                            >
+                                {link.label}
+                            </Link>
                         ))}
                         <a
                             href={`tel:${settings.phone?.replace(/\s/g, '') || ''}`}
