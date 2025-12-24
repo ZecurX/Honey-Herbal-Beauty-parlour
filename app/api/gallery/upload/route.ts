@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { writeFile, mkdir } from 'fs/promises';
-import path from 'path';
+import { supabase } from '@/lib/supabase';
+
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
     try {
@@ -32,27 +33,32 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Create uploads directory if it doesn't exist
-        const uploadsDir = path.join(process.cwd(), 'public', 'uploads', 'gallery');
-        await mkdir(uploadsDir, { recursive: true });
-
         // Generate unique filename
         const timestamp = Date.now();
         const extension = file.name.split('.').pop() || 'jpg';
         const filename = `gallery-${timestamp}.${extension}`;
-        const filepath = path.join(uploadsDir, filename);
 
-        // Convert file to buffer and save
-        const bytes = await file.arrayBuffer();
-        const buffer = Buffer.from(bytes);
-        await writeFile(filepath, buffer);
+        // Upload to Supabase Storage
+        const { data, error } = await supabase.storage
+            .from('gallery')
+            .upload(filename, file);
 
-        // Return the public URL path
-        const imageUrl = `/uploads/gallery/${filename}`;
+        if (error) {
+            console.error('Storage upload error:', error);
+            return NextResponse.json(
+                { success: false, error: 'Failed to upload image to storage' },
+                { status: 500 }
+            );
+        }
+
+        // Get public URL
+        const { data: { publicUrl } } = supabase.storage
+            .from('gallery')
+            .getPublicUrl(filename);
 
         return NextResponse.json({
             success: true,
-            imageUrl,
+            imageUrl: publicUrl,
             message: 'Image uploaded successfully'
         });
     } catch (error) {

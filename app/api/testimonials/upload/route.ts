@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { writeFile, mkdir } from 'fs/promises';
-import { join } from 'path';
-import { existsSync } from 'fs';
+import { supabase } from '@/lib/supabase';
+
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
     try {
@@ -24,27 +24,30 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Create uploads directory if it doesn't exist
-        const uploadsDir = join(process.cwd(), 'public', 'uploads', 'testimonials');
-        if (!existsSync(uploadsDir)) {
-            await mkdir(uploadsDir, { recursive: true });
-        }
-
         // Generate unique filename
         const timestamp = Date.now();
         const extension = file.name.split('.').pop() || 'jpg';
         const filename = `testimonial-${timestamp}.${extension}`;
-        const filepath = join(uploadsDir, filename);
 
-        // Convert file to buffer and save
-        const bytes = await file.arrayBuffer();
-        const buffer = Buffer.from(bytes);
-        await writeFile(filepath, buffer);
+        // Upload to Supabase Storage
+        const { data, error } = await supabase.storage
+            .from('testimonials')
+            .upload(filename, file);
 
-        // Return the public URL path
-        const imageUrl = `/uploads/testimonials/${filename}`;
+        if (error) {
+            console.error('Storage upload error:', error);
+            return NextResponse.json(
+                { success: false, error: 'Failed to upload image' },
+                { status: 500 }
+            );
+        }
 
-        return NextResponse.json({ success: true, imageUrl });
+        // Get public URL
+        const { data: { publicUrl } } = supabase.storage
+            .from('testimonials')
+            .getPublicUrl(filename);
+
+        return NextResponse.json({ success: true, imageUrl: publicUrl });
     } catch (error) {
         console.error('Upload error:', error);
         return NextResponse.json(
