@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { enquiries } from '@/lib/data';
+import { supabase } from '@/lib/supabase';
 
 // GET all enquiries
 export async function GET(request: NextRequest) {
@@ -7,21 +7,29 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get('status');
     const sort = searchParams.get('sort');
 
-    let items = [...enquiries];
+    let query = supabase
+        .from('enquiries')
+        .select('*');
 
     // Filter by status
     if (status && status !== 'All') {
-        items = items.filter(e => e.status === status);
+        query = query.eq('status', status);
     }
 
     // Sort by date
     if (sort === 'oldest') {
-        items.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+        query = query.order('created_at', { ascending: true });
     } else {
-        items.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        query = query.order('created_at', { ascending: false });
     }
 
-    return NextResponse.json({ success: true, data: items });
+    const { data: items, error } = await query;
+
+    if (error) {
+        return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true, data: items || [] });
 }
 
 // POST new enquiry
@@ -38,19 +46,25 @@ export async function POST(request: NextRequest) {
         }
 
         const newEnquiry = {
-            id: Date.now().toString(),
             name,
             phone,
             email,
             service,
             message,
-            status: 'New' as const,
-            createdAt: new Date().toISOString()
+            status: 'New'
         };
 
-        enquiries.unshift(newEnquiry);
+        const { data, error } = await supabase
+            .from('enquiries')
+            .insert([newEnquiry])
+            .select()
+            .single();
 
-        return NextResponse.json({ success: true, data: newEnquiry }, { status: 201 });
+        if (error) {
+            return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+        }
+
+        return NextResponse.json({ success: true, data }, { status: 201 });
     } catch {
         return NextResponse.json(
             { success: false, error: 'Invalid request body' },

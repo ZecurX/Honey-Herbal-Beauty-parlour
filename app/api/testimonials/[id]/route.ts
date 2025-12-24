@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { testimonialsData } from '@/lib/data';
+import { supabase } from '@/lib/supabase';
 
 // GET single testimonial
 export async function GET(
@@ -7,9 +7,14 @@ export async function GET(
     { params }: { params: Promise<{ id: string }> }
 ) {
     const { id } = await params;
-    const testimonial = testimonialsData.find(t => t.id === id);
 
-    if (!testimonial) {
+    const { data: testimonial, error } = await supabase
+        .from('testimonials')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+    if (error || !testimonial) {
         return NextResponse.json(
             { success: false, error: 'Testimonial not found' },
             { status: 404 }
@@ -29,25 +34,28 @@ export async function PUT(
         const body = await request.json();
         const { name, role, testimonial, rating, imageUrl } = body;
 
-        const index = testimonialsData.findIndex(t => t.id === id);
+        const updates: any = {};
+        if (name) updates.name = name;
+        if (role) updates.role = role;
+        if (testimonial) updates.testimonial = testimonial;
+        if (rating !== undefined) updates.rating = Number(rating);
+        if (imageUrl) updates.image_url = imageUrl;
 
-        if (index === -1) {
+        const { data, error } = await supabase
+            .from('testimonials')
+            .update(updates)
+            .eq('id', id)
+            .select()
+            .single();
+
+        if (error) {
             return NextResponse.json(
-                { success: false, error: 'Testimonial not found' },
-                { status: 404 }
+                { success: false, error: error.message },
+                { status: 500 }
             );
         }
 
-        testimonialsData[index] = {
-            ...testimonialsData[index],
-            ...(name && { name }),
-            ...(role && { role }),
-            ...(testimonial && { testimonial }),
-            ...(rating !== undefined && { rating: Number(rating) }),
-            ...(imageUrl && { imageUrl })
-        };
-
-        return NextResponse.json({ success: true, data: testimonialsData[index] });
+        return NextResponse.json({ success: true, data });
     } catch {
         return NextResponse.json(
             { success: false, error: 'Invalid request body' },
@@ -62,16 +70,18 @@ export async function DELETE(
     { params }: { params: Promise<{ id: string }> }
 ) {
     const { id } = await params;
-    const index = testimonialsData.findIndex(t => t.id === id);
 
-    if (index === -1) {
+    const { error } = await supabase
+        .from('testimonials')
+        .delete()
+        .eq('id', id);
+
+    if (error) {
         return NextResponse.json(
-            { success: false, error: 'Testimonial not found' },
-            { status: 404 }
+            { success: false, error: error.message },
+            { status: 500 }
         );
     }
-
-    testimonialsData.splice(index, 1);
 
     return NextResponse.json({ success: true, message: 'Testimonial deleted successfully' });
 }

@@ -1,17 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { servicesData } from '@/lib/data';
+import { supabase } from '@/lib/supabase';
 
 // GET all services
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const category = searchParams.get('category');
 
-    let items = servicesData;
+    let query = supabase
+        .from('services')
+        .select('*');
+
     if (category && category !== 'All') {
-        items = items.filter(item => item.category === category);
+        query = query.eq('category', category);
     }
 
-    return NextResponse.json({ success: true, data: items });
+    const { data: items, error } = await query;
+
+    if (error) {
+        return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true, data: items || [] });
 }
 
 // POST new service
@@ -28,7 +37,6 @@ export async function POST(request: NextRequest) {
         }
 
         const newService = {
-            id: Date.now().toString(),
             title,
             description,
             price,
@@ -36,9 +44,17 @@ export async function POST(request: NextRequest) {
             icon: icon || '✨'
         };
 
-        servicesData.push(newService);
+        const { data, error } = await supabase
+            .from('services')
+            .insert([newService])
+            .select()
+            .single();
 
-        return NextResponse.json({ success: true, data: newService }, { status: 201 });
+        if (error) {
+            return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+        }
+
+        return NextResponse.json({ success: true, data }, { status: 201 });
     } catch {
         return NextResponse.json(
             { success: false, error: 'Invalid request body' },

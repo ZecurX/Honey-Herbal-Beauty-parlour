@@ -1,37 +1,52 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { testimonialsData } from '@/lib/data';
+import { supabase } from '@/lib/supabase';
 
 // GET all testimonials
 export async function GET() {
-    return NextResponse.json({ success: true, data: testimonialsData });
+    const { data: testimonials, error } = await supabase
+        .from('testimonials')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true, data: testimonials });
 }
 
-// POST new testimonial
+// POST create new testimonial
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
-        const { name, role, testimonial, rating, imageUrl } = body;
 
-        if (!name || !testimonial || !rating) {
+        // Basic validation
+        if (!body.name || !body.testimonial) {
             return NextResponse.json(
-                { success: false, error: 'Name, testimonial, and rating are required' },
+                { success: false, error: 'Name and testimonial are required' },
                 { status: 400 }
             );
         }
 
         const newTestimonial = {
-            id: Date.now().toString(),
-            name,
-            role: role || 'Client',
-            testimonial,
-            rating: Number(rating),
-            imageUrl: imageUrl || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&q=80',
-            createdAt: new Date().toISOString().split('T')[0]
+            name: body.name,
+            role: body.role || 'Client',
+            testimonial: body.testimonial,
+            rating: Number(body.rating) || 5,
+            image_url: body.imageUrl || null
         };
 
-        testimonialsData.push(newTestimonial);
+        const { data, error } = await supabase
+            .from('testimonials')
+            .insert([newTestimonial])
+            .select()
+            .single();
 
-        return NextResponse.json({ success: true, data: newTestimonial }, { status: 201 });
+        if (error) {
+            return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+        }
+
+        return NextResponse.json({ success: true, data }, { status: 201 });
     } catch {
         return NextResponse.json(
             { success: false, error: 'Invalid request body' },

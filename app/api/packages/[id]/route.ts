@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { packagesData } from '@/lib/data';
+import { supabase } from '@/lib/supabase';
 
 // GET single package
 export async function GET(
@@ -7,9 +7,14 @@ export async function GET(
     { params }: { params: Promise<{ id: string }> }
 ) {
     const { id } = await params;
-    const pkg = packagesData.find(p => p.id === id);
 
-    if (!pkg) {
+    const { data: pkg, error } = await supabase
+        .from('packages')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+    if (error || !pkg) {
         return NextResponse.json(
             { success: false, error: 'Package not found' },
             { status: 404 }
@@ -29,24 +34,27 @@ export async function PUT(
         const body = await request.json();
         const { title, description, discount, validUntil } = body;
 
-        const index = packagesData.findIndex(p => p.id === id);
+        const updates: any = {};
+        if (title) updates.title = title;
+        if (description) updates.description = description;
+        if (discount !== undefined) updates.discount = discount;
+        if (validUntil !== undefined) updates.valid_until = validUntil;
 
-        if (index === -1) {
+        const { data, error } = await supabase
+            .from('packages')
+            .update(updates)
+            .eq('id', id)
+            .select()
+            .single();
+
+        if (error) {
             return NextResponse.json(
-                { success: false, error: 'Package not found' },
-                { status: 404 }
+                { success: false, error: error.message },
+                { status: 500 }
             );
         }
 
-        packagesData[index] = {
-            ...packagesData[index],
-            ...(title && { title }),
-            ...(description && { description }),
-            ...(discount !== undefined && { discount }),
-            ...(validUntil !== undefined && { validUntil })
-        };
-
-        return NextResponse.json({ success: true, data: packagesData[index] });
+        return NextResponse.json({ success: true, data });
     } catch {
         return NextResponse.json(
             { success: false, error: 'Invalid request body' },
@@ -61,16 +69,18 @@ export async function DELETE(
     { params }: { params: Promise<{ id: string }> }
 ) {
     const { id } = await params;
-    const index = packagesData.findIndex(p => p.id === id);
 
-    if (index === -1) {
+    const { error } = await supabase
+        .from('packages')
+        .delete()
+        .eq('id', id);
+
+    if (error) {
         return NextResponse.json(
-            { success: false, error: 'Package not found' },
-            { status: 404 }
+            { success: false, error: error.message },
+            { status: 500 }
         );
     }
-
-    packagesData.splice(index, 1);
 
     return NextResponse.json({ success: true, message: 'Package deleted' });
 }

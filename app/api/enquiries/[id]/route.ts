@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { enquiries } from '@/lib/data';
+import { supabase } from '@/lib/supabase';
 
 // GET single enquiry
 export async function GET(
@@ -7,9 +7,14 @@ export async function GET(
     { params }: { params: Promise<{ id: string }> }
 ) {
     const { id } = await params;
-    const enquiry = enquiries.find(e => e.id === id);
 
-    if (!enquiry) {
+    const { data: enquiry, error } = await supabase
+        .from('enquiries')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+    if (error || !enquiry) {
         return NextResponse.json(
             { success: false, error: 'Enquiry not found' },
             { status: 404 }
@@ -29,22 +34,25 @@ export async function PUT(
         const body = await request.json();
         const { status, notes } = body;
 
-        const index = enquiries.findIndex(e => e.id === id);
+        const updates: any = {};
+        if (status) updates.status = status;
+        if (notes !== undefined) updates.notes = notes;
 
-        if (index === -1) {
+        const { data, error } = await supabase
+            .from('enquiries')
+            .update(updates)
+            .eq('id', id)
+            .select()
+            .single();
+
+        if (error) {
             return NextResponse.json(
-                { success: false, error: 'Enquiry not found' },
-                { status: 404 }
+                { success: false, error: error.message },
+                { status: 500 }
             );
         }
 
-        enquiries[index] = {
-            ...enquiries[index],
-            ...(status && { status }),
-            ...(notes !== undefined && { notes })
-        };
-
-        return NextResponse.json({ success: true, data: enquiries[index] });
+        return NextResponse.json({ success: true, data });
     } catch {
         return NextResponse.json(
             { success: false, error: 'Invalid request body' },
@@ -72,16 +80,17 @@ export async function DELETE(
             );
         }
 
-        const index = enquiries.findIndex(e => e.id === id);
+        const { error } = await supabase
+            .from('enquiries')
+            .delete()
+            .eq('id', id);
 
-        if (index === -1) {
+        if (error) {
             return NextResponse.json(
-                { success: false, error: 'Enquiry not found' },
-                { status: 404 }
+                { success: false, error: error.message },
+                { status: 500 }
             );
         }
-
-        enquiries.splice(index, 1);
 
         return NextResponse.json({ success: true, message: 'Enquiry deleted successfully' });
     } catch {

@@ -1,9 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { packagesData } from '@/lib/data';
+import { supabase } from '@/lib/supabase';
 
 // GET all packages
 export async function GET() {
-    return NextResponse.json({ success: true, data: packagesData });
+    const { data: packages, error } = await supabase
+        .from('packages')
+        .select('*');
+
+    if (error) {
+        return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true, data: packages });
 }
 
 // POST new package
@@ -20,16 +28,23 @@ export async function POST(request: NextRequest) {
         }
 
         const newPackage = {
-            id: Date.now().toString(),
             title,
             description,
             discount: discount || '',
-            validUntil: validUntil || ''
+            valid_until: validUntil || null
         };
 
-        packagesData.push(newPackage);
+        const { data, error } = await supabase
+            .from('packages')
+            .insert([newPackage])
+            .select()
+            .single();
 
-        return NextResponse.json({ success: true, data: newPackage }, { status: 201 });
+        if (error) {
+            return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+        }
+
+        return NextResponse.json({ success: true, data }, { status: 201 });
     } catch {
         return NextResponse.json(
             { success: false, error: 'Invalid request body' },

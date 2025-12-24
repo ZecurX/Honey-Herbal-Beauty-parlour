@@ -1,17 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { galleryItems } from '@/lib/data';
+import { supabase } from '@/lib/supabase';
 
 // GET all gallery items
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const category = searchParams.get('category');
 
-    let items = galleryItems;
+    let query = supabase
+        .from('gallery_items')
+        .select('*')
+        .order('created_at', { ascending: false });
+
     if (category && category !== 'All') {
-        items = items.filter(item => item.category === category);
+        query = query.eq('category', category);
     }
 
-    return NextResponse.json({ success: true, data: items });
+    const { data: items, error } = await query;
+
+    if (error) {
+        return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true, data: items || [] });
 }
 
 // POST new gallery item
@@ -28,16 +38,22 @@ export async function POST(request: NextRequest) {
         }
 
         const newItem = {
-            id: Date.now().toString(),
-            imageUrl: imageUrl || 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400',
+            image_url: imageUrl || 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400',
             caption,
-            category,
-            createdAt: new Date().toISOString()
+            category
         };
 
-        galleryItems.unshift(newItem);
+        const { data, error } = await supabase
+            .from('gallery_items')
+            .insert([newItem])
+            .select()
+            .single();
 
-        return NextResponse.json({ success: true, data: newItem }, { status: 201 });
+        if (error) {
+            return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+        }
+
+        return NextResponse.json({ success: true, data }, { status: 201 });
     } catch {
         return NextResponse.json(
             { success: false, error: 'Invalid request body' },

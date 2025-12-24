@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { galleryItems } from '@/lib/data';
+import { supabase } from '@/lib/supabase';
 
 // GET single gallery item
 export async function GET(
@@ -7,9 +7,14 @@ export async function GET(
     { params }: { params: Promise<{ id: string }> }
 ) {
     const { id } = await params;
-    const item = galleryItems.find(g => g.id === id);
 
-    if (!item) {
+    const { data: item, error } = await supabase
+        .from('gallery_items')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+    if (error || !item) {
         return NextResponse.json(
             { success: false, error: 'Gallery item not found' },
             { status: 404 }
@@ -29,23 +34,26 @@ export async function PUT(
         const body = await request.json();
         const { imageUrl, caption, category } = body;
 
-        const index = galleryItems.findIndex(g => g.id === id);
+        const updates: any = {};
+        if (imageUrl) updates.image_url = imageUrl;
+        if (caption) updates.caption = caption;
+        if (category) updates.category = category;
 
-        if (index === -1) {
+        const { data, error } = await supabase
+            .from('gallery_items')
+            .update(updates)
+            .eq('id', id)
+            .select()
+            .single();
+
+        if (error) {
             return NextResponse.json(
-                { success: false, error: 'Gallery item not found' },
-                { status: 404 }
+                { success: false, error: error.message },
+                { status: 500 }
             );
         }
 
-        galleryItems[index] = {
-            ...galleryItems[index],
-            ...(imageUrl && { imageUrl }),
-            ...(caption && { caption }),
-            ...(category && { category })
-        };
-
-        return NextResponse.json({ success: true, data: galleryItems[index] });
+        return NextResponse.json({ success: true, data });
     } catch {
         return NextResponse.json(
             { success: false, error: 'Invalid request body' },
@@ -60,16 +68,18 @@ export async function DELETE(
     { params }: { params: Promise<{ id: string }> }
 ) {
     const { id } = await params;
-    const index = galleryItems.findIndex(g => g.id === id);
 
-    if (index === -1) {
+    const { error } = await supabase
+        .from('gallery_items')
+        .delete()
+        .eq('id', id);
+
+    if (error) {
         return NextResponse.json(
-            { success: false, error: 'Gallery item not found' },
-            { status: 404 }
+            { success: false, error: error.message },
+            { status: 500 }
         );
     }
-
-    galleryItems.splice(index, 1);
 
     return NextResponse.json({ success: true, message: 'Gallery item deleted' });
 }
