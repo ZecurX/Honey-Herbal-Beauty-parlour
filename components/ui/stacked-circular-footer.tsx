@@ -290,22 +290,28 @@ function StackedCircularFooter() {
                         <div className="bg-white/10 rounded-xl p-5 border border-secondary/20">
                             <h4 className="text-white/80 text-sm mb-4">Follow Us</h4>
                             <div className="flex space-x-3">
-                                <Button
-                                    variant="outline"
-                                    size="icon"
-                                    className="rounded-full border-secondary/30 bg-transparent text-white hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all duration-300"
-                                >
-                                    <Facebook className="h-4 w-4" />
-                                    <span className="sr-only">Facebook</span>
-                                </Button>
-                                <Button
-                                    variant="outline"
-                                    size="icon"
-                                    className="rounded-full border-secondary/30 bg-transparent text-white hover:bg-gradient-to-r hover:from-pink-500 hover:to-purple-500 hover:text-white hover:border-transparent transition-all duration-300"
-                                >
-                                    <Instagram className="h-4 w-4" />
-                                    <span className="sr-only">Instagram</span>
-                                </Button>
+                                {settings.socialLinks?.facebook && (
+                                    <a
+                                        href={settings.socialLinks.facebook}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="rounded-full border border-secondary/30 bg-transparent text-white hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all duration-300 w-10 h-10 flex items-center justify-center"
+                                    >
+                                        <Facebook className="h-4 w-4" />
+                                        <span className="sr-only">Facebook</span>
+                                    </a>
+                                )}
+                                {settings.socialLinks?.instagram && (
+                                    <a
+                                        href={settings.socialLinks.instagram}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="rounded-full border border-secondary/30 bg-transparent text-white hover:bg-gradient-to-r hover:from-pink-500 hover:to-purple-500 hover:text-white hover:border-transparent transition-all duration-300 w-10 h-10 flex items-center justify-center"
+                                    >
+                                        <Instagram className="h-4 w-4" />
+                                        <span className="sr-only">Instagram</span>
+                                    </a>
+                                )}
                             </div>
                         </div>
                     </div>

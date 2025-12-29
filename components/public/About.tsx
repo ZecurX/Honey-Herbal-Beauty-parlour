@@ -89,7 +89,7 @@ const About: React.FC = () => {
                         {/* Floating Badge - Experience */}
                         <div className="absolute -bottom-8 -right-4 lg:-right-8 glass-card !rounded-2xl p-6 shadow-2xl hidden md:block animate-float">
                             <div className="text-center">
-                                <span className="text-5xl font-display font-bold gradient-text block">15+</span>
+                                <span className="text-5xl font-display font-bold gradient-text block">23+</span>
                                 <span className="text-sm text-gray-light font-medium">Years Experience</span>
                             </div>
                         </div>
@@ -112,7 +112,7 @@ const About: React.FC = () => {
                         <div className="golden-line w-20 mb-8"></div>
 
                         <div className="space-y-5 text-gray-light leading-relaxed text-lg">
-                            {(settings.aboutText || 'At Honey Herbal Beauty Parlor, we believe in the power of nature for your beauty. Our expert beauticians use only the finest herbal and organic products to give you a rejuvenating experience.\n\nWith over 15 years of experience, we have been trusted by thousands of customers for our premium services and personalized care.').split('\n\n').map((paragraph, index) => (
+                            {(settings.aboutText || 'At Honey Herbal Beauty Parlor, we believe in the power of nature for your beauty. Our expert beauticians use only the finest herbal and organic products to give you a rejuvenating experience.\n\nWith over 23+ years of experience, we have been trusted by thousands of customers for our premium services and personalized care.').split('\n\n').map((paragraph, index) => (
                                 <p key={index}>{paragraph}</p>
                             ))}
                         </div>
