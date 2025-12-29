@@ -118,7 +118,7 @@ export default function AboutUsSection() {
     const stats = [
         { icon: <Award />, value: 5000, label: "Happy Customers", suffix: "+" },
         { icon: <Users />, value: 150, label: "Treatments Daily", suffix: "+" },
-        { icon: <Calendar />, value: 15, label: "Years Experience", suffix: "" },
+        { icon: <Calendar />, value: 23, label: "Years Experience", suffix: "" },
         { icon: <TrendingUp />, value: 98, label: "Satisfaction Rate", suffix: "%" },
     ]
 

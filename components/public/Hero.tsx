@@ -106,18 +106,12 @@ const Hero: React.FC = () => {
                             </div>
 
                             {/* Trust Indicators - Clean Layout */}
-                            <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto">
-                                <div className="flex items-center justify-center gap-3 p-4">
-                                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                                        <CheckIcon />
-                                    </div>
-                                    <span className="font-medium text-charcoal whitespace-nowrap">100% Organic</span>
-                                </div>
+                            <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
                                 <div className="flex items-center justify-center gap-3 p-4">
                                     <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                                         <ClockIcon />
                                     </div>
-                                    <span className="font-medium text-charcoal whitespace-nowrap">15+ Years Exp.</span>
+                                    <span className="font-medium text-charcoal whitespace-nowrap">23+ Years Exp.</span>
                                 </div>
                                 <div className="flex items-center justify-center gap-3 p-4">
                                     <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">

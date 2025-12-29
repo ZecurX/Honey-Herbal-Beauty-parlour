@@ -18,7 +18,9 @@ export default function SettingsPage() {
         whatsapp: '',
         email: '',
         address: '',
-        workingHours: ''
+        workingHours: '',
+        instagramUrl: '',
+        facebookUrl: ''
     });
     const [saving, setSaving] = useState(false);
     const [saved, setSaved] = useState(false);
@@ -38,7 +40,9 @@ export default function SettingsPage() {
                 whatsapp: settings.whatsapp || '',
                 email: settings.email || '',
                 address: settings.address || '',
-                workingHours: settings.workingHours || ''
+                workingHours: settings.workingHours || '',
+                instagramUrl: settings.socialLinks?.instagram || '',
+                facebookUrl: settings.socialLinks?.facebook || ''
             });
         }
     }, [settings]);
@@ -48,7 +52,17 @@ export default function SettingsPage() {
         setSaving(true);
         await updateSettings({
             ...settings,
-            ...formData
+            businessName: formData.businessName,
+            heroTagline: formData.heroTagline,
+            phone: formData.phone,
+            whatsapp: formData.whatsapp,
+            email: formData.email,
+            address: formData.address,
+            workingHours: formData.workingHours,
+            socialLinks: {
+                instagram: formData.instagramUrl,
+                facebook: formData.facebookUrl
+            }
         });
         setSaving(false);
         setSaved(true);
@@ -137,6 +151,33 @@ export default function SettingsPage() {
                                 placeholder="e.g., Mon-Sat: 10AM - 8PM | Sun: 10AM - 6PM"
                                 className="w-full px-4 py-3 rounded-xl border border-secondary bg-bg-cream focus:ring-2 focus:ring-primary outline-none"
                             />
+                        </div>
+
+                        {/* Social Media Links */}
+                        <div className="border-t border-secondary/30 pt-5 mt-5">
+                            <h3 className="text-sm font-semibold text-charcoal mb-4">Social Media Links</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-charcoal mb-2">Instagram URL</label>
+                                    <input
+                                        type="url"
+                                        value={formData.instagramUrl}
+                                        onChange={(e) => setFormData({ ...formData, instagramUrl: e.target.value })}
+                                        placeholder="https://instagram.com/yourpage"
+                                        className="w-full px-4 py-3 rounded-xl border border-secondary bg-bg-cream focus:ring-2 focus:ring-primary outline-none"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-charcoal mb-2">Facebook URL</label>
+                                    <input
+                                        type="url"
+                                        value={formData.facebookUrl}
+                                        onChange={(e) => setFormData({ ...formData, facebookUrl: e.target.value })}
+                                        placeholder="https://facebook.com/yourpage"
+                                        className="w-full px-4 py-3 rounded-xl border border-secondary bg-bg-cream focus:ring-2 focus:ring-primary outline-none"
+                                    />
+                                </div>
+                            </div>
                         </div>
 
                         <div className="flex items-center gap-4">
