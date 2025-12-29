@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -60,13 +61,13 @@ function StackedCircularFooter() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 {/* Section Header */}
                 <div className="text-center mb-12">
-                    <div className="inline-block mb-6 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 p-3 ring-2 ring-secondary/30 shadow-xl overflow-hidden">
+                    <Link href="/" className="inline-block mb-6 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 p-3 ring-2 ring-secondary/30 shadow-xl overflow-hidden hover:ring-secondary transition-all cursor-pointer">
                         <img
                             src="/logo.jpg"
                             alt="Honey Herbal Logo"
                             className="w-16 h-16 rounded-full object-cover"
                         />
-                    </div>
+                    </Link>
                     <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4">
                         Get In <span className="text-secondary">Touch</span>
                     </h2>
@@ -324,12 +325,24 @@ function StackedCircularFooter() {
                 <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                     {/* Navigation Links */}
                     <nav className="flex flex-wrap justify-center gap-6 text-sm">
-                        <a href="#" className="text-white/70 hover:text-secondary transition-colors duration-300">Home</a>
-                        <a href="#services" className="text-white/70 hover:text-secondary transition-colors duration-300">Services</a>
-                        <a href="#about" className="text-white/70 hover:text-secondary transition-colors duration-300">About</a>
-                        <a href="#gallery" className="text-white/70 hover:text-secondary transition-colors duration-300">Gallery</a>
-                        <a href="#offers" className="text-white/70 hover:text-secondary transition-colors duration-300">Offers</a>
+                        <Link href="/" className="text-white/70 hover:text-secondary transition-colors duration-300">Home</Link>
+                        <a href="/#services" className="text-white/70 hover:text-secondary transition-colors duration-300">Services</a>
+                        <a href="/#about" className="text-white/70 hover:text-secondary transition-colors duration-300">About</a>
+                        <a href="/#gallery" className="text-white/70 hover:text-secondary transition-colors duration-300">Gallery</a>
+                        <a href="/#offers" className="text-white/70 hover:text-secondary transition-colors duration-300">Offers</a>
                     </nav>
+
+                    {/* Developer Credit */}
+                    <div className="text-center">
+                        <a
+                            href="https://zecurx.com"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm text-white/60 hover:text-white transition-colors duration-300"
+                        >
+                            Developed by <span className="text-red-500">Z</span><span className="text-white">ecur</span><span className="text-red-500">X</span>
+                        </a>
+                    </div>
 
                     {/* Copyright */}
                     <div className="text-center md:text-right">

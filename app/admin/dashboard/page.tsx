@@ -73,11 +73,11 @@ export default function DashboardPage() {
         }
     }, [isAuthenticated, router]);
 
-    const newEnquiries = enquiries.filter(e => e.status === 'New').length;
-    const totalEnquiries = enquiries.length;
-    const totalGalleryImages = gallery.length;
-    const totalServices = services.length;
-    const totalPackages = packages.length;
+    const newEnquiries = (enquiries || []).filter(e => e.status === 'New').length;
+    const totalEnquiries = (enquiries || []).length;
+    const totalGalleryImages = (gallery || []).length;
+    const totalServices = (services || []).length;
+    const totalPackages = (packages || []).length;
 
     const stats = [
         { label: 'Total Enquiries', value: totalEnquiries, icon: <EnvelopeIcon />, color: 'bg-blue-100 text-blue-600' },
@@ -186,7 +186,7 @@ export default function DashboardPage() {
 
                     {isLoading ? (
                         <div className="text-center py-8 text-gray-light">Loading...</div>
-                    ) : enquiries.length === 0 ? (
+                    ) : !enquiries || enquiries.length === 0 ? (
                         <div className="text-center py-8 text-gray-light">
                             <InboxIcon className="w-12 h-12 mx-auto mb-2 text-gray-300" />
                             <p>No enquiries yet</p>

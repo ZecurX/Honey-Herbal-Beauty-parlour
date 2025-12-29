@@ -195,11 +195,11 @@ export default function PackagesManagementPage() {
 
                 {/* Packages List */}
                 <div className="bg-white rounded-2xl p-6 shadow-sm">
-                    <h2 className="font-display text-xl font-semibold text-charcoal mb-4">All Packages ({packages.length})</h2>
+                    <h2 className="font-display text-xl font-semibold text-charcoal mb-4">All Packages ({(packages || []).length})</h2>
 
                     {loading ? (
                         <div className="text-center py-8 text-gray-light">Loading...</div>
-                    ) : packages.length === 0 ? (
+                    ) : !packages || packages.length === 0 ? (
                         <div className="text-center py-8 text-gray-light">No packages added yet</div>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

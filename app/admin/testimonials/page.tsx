@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { useTestimonials } from '@/context/TestimonialsContext';
@@ -32,35 +32,25 @@ const DeleteIcon = () => (
     </svg>
 );
 
-const UploadIcon = () => (
-    <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-    </svg>
-);
-
 interface TestimonialFormData {
     name: string;
     role: string;
     testimonial: string;
     rating: number;
-    imageUrl: string;
 }
 
 export default function TestimonialsManagementPage() {
     const { isAuthenticated } = useAuth();
-    const { testimonials, loading, addTestimonial, updateTestimonial, deleteTestimonial, uploadImage } = useTestimonials();
+    const { testimonials, loading, addTestimonial, updateTestimonial, deleteTestimonial } = useTestimonials();
     const router = useRouter();
-    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const [showForm, setShowForm] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
-    const [uploading, setUploading] = useState(false);
     const [formData, setFormData] = useState<TestimonialFormData>({
         name: '',
         role: '',
         testimonial: '',
-        rating: 5,
-        imageUrl: ''
+        rating: 5
     });
 
     useEffect(() => {
@@ -70,7 +60,7 @@ export default function TestimonialsManagementPage() {
     }, [isAuthenticated, router]);
 
     const resetForm = () => {
-        setFormData({ name: '', role: '', testimonial: '', rating: 5, imageUrl: '' });
+        setFormData({ name: '', role: '', testimonial: '', rating: 5 });
         setEditingId(null);
         setShowForm(false);
     };
@@ -80,8 +70,7 @@ export default function TestimonialsManagementPage() {
             name: testimonial.name || '',
             role: testimonial.role || '',
             testimonial: testimonial.testimonial || '',
-            rating: testimonial.rating,
-            imageUrl: testimonial.imageUrl || ''
+            rating: testimonial.rating
         });
         setEditingId(testimonial.id);
         setShowForm(true);
@@ -96,22 +85,6 @@ export default function TestimonialsManagementPage() {
                 console.error('Failed to delete testimonial:', error);
                 alert('Failed to delete testimonial. Please try again.');
             }
-        }
-    };
-
-    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-
-        setUploading(true);
-        try {
-            const imageUrl = await uploadImage(file);
-            setFormData(prev => ({ ...prev, imageUrl }));
-        } catch (error) {
-            console.error('Failed to upload image:', error);
-            alert('Failed to upload image. Please try again.');
-        } finally {
-            setUploading(false);
         }
     };
 
@@ -220,42 +193,6 @@ export default function TestimonialsManagementPage() {
                                 </div>
                             </div>
 
-                            {/* Photo Upload */}
-                            <div>
-                                <label className="block text-sm font-medium text-charcoal mb-2">Customer Photo</label>
-                                <div className="flex items-center gap-4">
-                                    {formData.imageUrl ? (
-                                        <img
-                                            src={formData.imageUrl}
-                                            alt="Preview"
-                                            className="w-16 h-16 rounded-full object-cover"
-                                        />
-                                    ) : (
-                                        <div className="w-16 h-16 rounded-full bg-secondary-light/30 flex items-center justify-center">
-                                            <UploadIcon />
-                                        </div>
-                                    )}
-                                    <div>
-                                        <input
-                                            ref={fileInputRef}
-                                            type="file"
-                                            accept="image/*"
-                                            onChange={handleImageUpload}
-                                            className="hidden"
-                                        />
-                                        <button
-                                            type="button"
-                                            onClick={() => fileInputRef.current?.click()}
-                                            disabled={uploading}
-                                            className="px-4 py-2 bg-secondary-light/30 text-charcoal rounded-xl text-sm hover:bg-secondary-light/50 transition-colors disabled:opacity-50"
-                                        >
-                                            {uploading ? 'Uploading...' : 'Upload Photo'}
-                                        </button>
-                                        <p className="text-xs text-gray-light mt-1">JPEG, PNG, WebP (max 5MB)</p>
-                                    </div>
-                                </div>
-                            </div>
-
                             {/* Actions */}
                             <div className="flex gap-3 pt-4">
                                 <button
@@ -279,12 +216,12 @@ export default function TestimonialsManagementPage() {
                 {/* Testimonials List */}
                 <div className="bg-white rounded-2xl p-6 shadow-sm">
                     <h2 className="font-display text-xl font-semibold text-charcoal mb-4">
-                        All Testimonials ({testimonials.length})
+                        All Testimonials ({(testimonials || []).length})
                     </h2>
 
                     {loading ? (
                         <div className="text-center py-8 text-gray-light">Loading...</div>
-                    ) : testimonials.length === 0 ? (
+                    ) : !testimonials || testimonials.length === 0 ? (
                         <div className="text-center py-8 text-gray-light">
                             No testimonials yet. Add your first customer testimonial!
                         </div>

@@ -62,7 +62,7 @@ export default function EnquiriesManagementPage() {
 
 
     const handleDownloadCSV = () => {
-        if (enquiries.length === 0) {
+        if (!enquiries || enquiries.length === 0) {
             alert('No enquiries to download');
             return;
         }
@@ -143,7 +143,7 @@ export default function EnquiriesManagementPage() {
                         </button>
                         <button
                             onClick={handleDownloadCSV}
-                            disabled={enquiries.length === 0}
+                            disabled={!enquiries || enquiries.length === 0}
                             className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-xl font-medium hover:bg-primary-dark transition-colors disabled:opacity-50"
                         >
                             <DownloadIcon />
@@ -154,11 +154,11 @@ export default function EnquiriesManagementPage() {
 
                 {/* Enquiries List */}
                 <div className="bg-white rounded-2xl p-6 shadow-sm">
-                    <h2 className="font-display text-xl font-semibold text-charcoal mb-4">All Enquiries ({enquiries.length})</h2>
+                    <h2 className="font-display text-xl font-semibold text-charcoal mb-4">All Enquiries ({(enquiries || []).length})</h2>
 
                     {loading ? (
                         <div className="text-center py-8 text-gray-light">Loading...</div>
-                    ) : enquiries.length === 0 ? (
+                    ) : !enquiries || enquiries.length === 0 ? (
                         <div className="text-center py-8 text-gray-light">No enquiries yet</div>
                     ) : (
                         <div className="overflow-x-auto">
