@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Settings } from '@/types';
 import { mockSettings } from '@/data/mockData';
+import { settingsApi } from '@/services/api';
 
 interface SettingsContextType {
     settings: Settings;
@@ -13,24 +14,35 @@ const SettingsContext = createContext<SettingsContextType | undefined>(undefined
 
 export const SettingsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [settings, setSettings] = useState<Settings>(mockSettings);
-    const [isLoaded, setIsLoaded] = useState(false);
+    const [loading, setLoading] = useState(true);
+
+    const fetchSettings = async () => {
+        try {
+            const data = await settingsApi.get();
+            if (data) {
+                setSettings(data);
+            }
+        } catch (error) {
+            console.error('Failed to fetch settings:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const saved = localStorage.getItem('honey-herbal-settings');
-        if (saved) {
-            setSettings(JSON.parse(saved));
-        }
-        setIsLoaded(true);
+        fetchSettings();
     }, []);
 
-    useEffect(() => {
-        if (isLoaded) {
-            localStorage.setItem('honey-herbal-settings', JSON.stringify(settings));
+    const updateSettings = async (newSettings: Settings) => {
+        try {
+            // Optimistic update
+            setSettings(newSettings);
+            await settingsApi.update(newSettings);
+        } catch (error) {
+            console.error('Failed to update settings:', error);
+            // Revert on error (could re-fetch)
+            fetchSettings();
         }
-    }, [settings, isLoaded]);
-
-    const updateSettings = (newSettings: Settings) => {
-        setSettings(newSettings);
     };
 
     return (

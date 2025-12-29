@@ -70,7 +70,7 @@ const Gallery: React.FC = () => {
 
     // Convert gallery items to bento format
     const galleryItems: ImageItem[] = useMemo(() => {
-        if (gallery.length === 0) {
+        if (!gallery || gallery.length === 0) {
             return fallbackGalleryItems;
         }
         // Map uploaded images to bento format

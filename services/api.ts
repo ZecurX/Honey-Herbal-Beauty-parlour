@@ -1,5 +1,7 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
 
+import { Package, Settings } from '@/types';
+
 // Helper to get base URL without /api suffix
 const getBaseUrl = () => API_BASE_URL.replace(/\/api$/, '');
 
@@ -102,7 +104,7 @@ export const settingsApi = {
         return data.data;
     },
 
-    update: async (settings: Record<string, unknown>) => {
+    update: async (settings: Partial<Settings>) => {
         const res = await fetch(`${API_BASE_URL}/settings`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
@@ -155,10 +157,10 @@ export const packagesApi = {
     getAll: async () => {
         const res = await fetch(`${API_BASE_URL}/packages`);
         const data = await res.json();
-        return data.data;
+        return data.data || [];
     },
 
-    add: async (pkg: { title: string; description: string; discount?: string; validUntil?: string }) => {
+    add: async (pkg: Omit<Package, 'id'>) => {
         const res = await fetch(`${API_BASE_URL}/packages`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -168,7 +170,7 @@ export const packagesApi = {
         return data.data;
     },
 
-    update: async (id: string, pkg: { title?: string; description?: string; discount?: string; validUntil?: string }) => {
+    update: async (id: string, pkg: Partial<Package>) => {
         const res = await fetch(`${API_BASE_URL}/packages/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
