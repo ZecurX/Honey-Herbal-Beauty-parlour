@@ -3,10 +3,10 @@ import { Service, GalleryItem, Enquiry, Offer, Testimonial, Settings } from '@/t
 // Mock Settings
 export const mockSettings: Settings = {
     businessName: 'Honey Herbal Beauty Parlor',
-    phone: '+91 98765 43210',
-    whatsapp: '+91 98765 43210',
-    email: 'hello@honeyherbal.com',
-    address: '123 Green Lane, Botanical Garden Road, Mumbai - 400001',
+    phone: '+91 95385 27433',
+    whatsapp: '+91 95385 27433',
+    email: 'honeyherbalbeautyparlour@gmail.com',
+    address: 'Honey Herbal Beauty Parlour, Koramangala, Bengaluru, Karnataka',
     workingHours: 'Mon-Sat: 10AM - 8PM | Sun: 10AM - 6PM',
     heroTagline: 'Experience the Power of Nature for Your Beauty',
     aboutText: `At Honey Herbal Beauty Parlor, we believe that true beauty comes from nature. Our salon combines centuries-old herbal traditions with modern beauty techniques to give you a radiant, natural glow.
@@ -16,7 +16,7 @@ Founded with a passion for organic beauty care, we use only the finest herbal in
 Whether you're preparing for your special day or treating yourself to some self-care, our personalized services ensure you leave feeling refreshed, rejuvenated, and beautiful inside out.`,
     socialLinks: {
         facebook: 'https://facebook.com/honeyherbal',
-        instagram: 'https://instagram.com/honeyherbal'
+        instagram: 'https://www.instagram.com/honeyherbalbeautyparlour/'
     }
 };
 
