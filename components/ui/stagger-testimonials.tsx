@@ -111,19 +111,9 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({
             {/* Quote icon */}
             <Quote
                 className={cn(
-                    "w-8 h-8 mb-2 opacity-30",
+                    "w-8 h-8 mb-4 opacity-30",
                     isCenter ? "text-white" : "text-primary"
                 )}
-            />
-
-            <img
-                src={testimonial.imgSrc}
-                alt={`${testimonial.by.split(',')[0]}`}
-                className="mb-4 h-14 w-14 rounded-full object-cover object-top border-2"
-                style={{
-                    borderColor: isCenter ? "rgba(255,255,255,0.5)" : "var(--color-primary)",
-                    boxShadow: "3px 3px 0px var(--color-secondary-light)"
-                }}
             />
 
             {/* Stars */}

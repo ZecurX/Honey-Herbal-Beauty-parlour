@@ -8,10 +8,11 @@ import AdminSidebarLayout from '@/components/admin/AdminSidebarLayout';
 
 export default function ServicesManagementPage() {
     const { isAuthenticated } = useAuth();
-    const { services, loading, addService, deleteService, refreshServices } = useServices();
+    const { services, loading, addService, updateService, deleteService, refreshServices } = useServices();
     const router = useRouter();
 
     const [showAddForm, setShowAddForm] = useState(false);
+    const [editingId, setEditingId] = useState<string | null>(null);
     const [deletingId, setDeletingId] = useState<string | null>(null);
     const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -31,19 +32,46 @@ export default function ServicesManagementPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await addService({
-                title: newService.title,
-                description: newService.description,
-                price: newService.price,
-                category: newService.category
-            });
+            if (editingId) {
+                await updateService(editingId, {
+                    title: newService.title,
+                    description: newService.description,
+                    price: newService.price,
+                    category: newService.category
+                });
+                setEditingId(null);
+            } else {
+                await addService({
+                    title: newService.title,
+                    description: newService.description,
+                    price: newService.price,
+                    category: newService.category
+                });
+            }
             setNewService({ title: '', description: '', price: '', category: 'Facial' });
             setShowAddForm(false);
             refreshServices();
         } catch (error) {
-            console.error('Failed to add service:', error);
-            setErrorMessage('Failed to add service. Please try again.');
+            console.error('Failed to save service:', error);
+            setErrorMessage(editingId ? 'Failed to update service. Please try again.' : 'Failed to add service. Please try again.');
         }
+    };
+
+    const handleEditClick = (service: any) => {
+        setNewService({
+            title: service.title,
+            description: service.description,
+            price: service.price,
+            category: service.category
+        });
+        setEditingId(service.id);
+        setShowAddForm(true);
+    };
+
+    const handleCancelForm = () => {
+        setNewService({ title: '', description: '', price: '', category: 'Facial' });
+        setEditingId(null);
+        setShowAddForm(false);
     };
 
     const handleDeleteClick = (id: string) => {
@@ -84,7 +112,7 @@ export default function ServicesManagementPage() {
                         <p className="text-gray-light mt-1">Add, edit, or remove services</p>
                     </div>
                     <button
-                        onClick={() => setShowAddForm(!showAddForm)}
+                        onClick={() => showAddForm ? handleCancelForm() : setShowAddForm(true)}
                         className="btn-primary"
                     >
                         {showAddForm ? 'Cancel' : '+ Add Service'}
@@ -141,7 +169,9 @@ export default function ServicesManagementPage() {
                 {/* Add Form */}
                 {showAddForm && (
                     <div className="bg-white rounded-2xl p-6 shadow-sm">
-                        <h2 className="font-display text-xl font-semibold text-charcoal mb-4">Add New Service</h2>
+                        <h2 className="font-display text-xl font-semibold text-charcoal mb-4">
+                            {editingId ? 'Edit Service' : 'Add New Service'}
+                        </h2>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
@@ -194,7 +224,7 @@ export default function ServicesManagementPage() {
                                 />
                             </div>
                             <button type="submit" className="btn-primary">
-                                Add Service
+                                {editingId ? 'Update Service' : 'Add Service'}
                             </button>
                         </form>
                     </div>
@@ -202,11 +232,11 @@ export default function ServicesManagementPage() {
 
                 {/* Services List */}
                 <div className="bg-white rounded-2xl p-6 shadow-sm">
-                    <h2 className="font-display text-xl font-semibold text-charcoal mb-4">All Services ({services.length})</h2>
+                    <h2 className="font-display text-xl font-semibold text-charcoal mb-4">All Services ({(services || []).length})</h2>
 
                     {loading ? (
                         <div className="text-center py-8 text-gray-light">Loading...</div>
-                    ) : services.length === 0 ? (
+                    ) : !services || services.length === 0 ? (
                         <div className="text-center py-8 text-gray-light">No services added yet</div>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -216,20 +246,28 @@ export default function ServicesManagementPage() {
                                         <span className="px-2 py-1 text-xs bg-primary/10 text-primary rounded-full">
                                             {service.category}
                                         </span>
-                                        <button
-                                            onClick={() => handleDeleteClick(service.id)}
-                                            disabled={deletingId === service.id}
-                                            className="text-red-500 hover:text-red-700 text-sm disabled:opacity-50 flex items-center gap-1"
-                                        >
-                                            {deletingId === service.id ? (
-                                                <>
-                                                    <div className="w-3 h-3 border-2 border-red-300 border-t-red-500 rounded-full animate-spin"></div>
-                                                    Deleting...
-                                                </>
-                                            ) : (
-                                                'Delete'
-                                            )}
-                                        </button>
+                                        <div className="flex items-center gap-2">
+                                            <button
+                                                onClick={() => handleEditClick(service)}
+                                                className="text-primary hover:text-primary-dark text-sm"
+                                            >
+                                                Edit
+                                            </button>
+                                            <button
+                                                onClick={() => handleDeleteClick(service.id)}
+                                                disabled={deletingId === service.id}
+                                                className="text-red-500 hover:text-red-700 text-sm disabled:opacity-50 flex items-center gap-1"
+                                            >
+                                                {deletingId === service.id ? (
+                                                    <>
+                                                        <div className="w-3 h-3 border-2 border-red-300 border-t-red-500 rounded-full animate-spin"></div>
+                                                        Deleting...
+                                                    </>
+                                                ) : (
+                                                    'Delete'
+                                                )}
+                                            </button>
+                                        </div>
                                     </div>
                                     <h3 className="font-semibold text-charcoal mb-1">{service.title}</h3>
                                     <p className="text-sm text-gray-light mb-2 line-clamp-2">{service.description}</p>

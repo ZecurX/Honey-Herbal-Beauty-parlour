@@ -351,11 +351,11 @@ export default function GalleryManagementPage() {
 
                 {/* Gallery Grid */}
                 <div className="bg-white rounded-2xl p-6 shadow-sm">
-                    <h2 className="font-display text-xl font-semibold text-charcoal mb-4">All Images ({gallery.length})</h2>
+                    <h2 className="font-display text-xl font-semibold text-charcoal mb-4">All Images ({(gallery || []).length})</h2>
 
                     {loading ? (
                         <div className="text-center py-8 text-gray-light">Loading...</div>
-                    ) : gallery.length === 0 ? (
+                    ) : !gallery || gallery.length === 0 ? (
                         <div className="text-center py-8 text-gray-light">No images added yet</div>
                     ) : (
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
