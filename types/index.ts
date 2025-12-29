@@ -41,6 +41,9 @@ export interface Offer {
     image?: string;
 }
 
+// Package interface (alias for Offer for now)
+export type Package = Offer;
+
 // Testimonial interface
 export interface Testimonial {
     id: string;
