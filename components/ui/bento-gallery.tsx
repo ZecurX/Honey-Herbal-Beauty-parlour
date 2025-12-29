@@ -152,53 +152,44 @@ const InteractiveImageBentoGallery: React.FC<InteractiveImageBentoGalleryProps> 
 
             <div
                 ref={containerRef}
-                className="relative mt-12 w-full cursor-grab active:cursor-grabbing"
+                className="relative mt-12 w-full overflow-x-auto"
+                style={{ WebkitOverflowScrolling: 'touch' }}
             >
-                <motion.div
-                    className="w-max"
-                    drag="x"
-                    dragConstraints={{ left: dragConstraint, right: 0 }}
-                    dragElastic={0.05}
+                <div
+                    ref={gridRef}
+                    className="flex gap-4 px-4 md:px-8 pb-4"
+                    style={{ minWidth: 'max-content' }}
                 >
-                    <motion.div
-                        ref={gridRef}
-                        className="grid auto-cols-[minmax(14rem,1fr)] sm:auto-cols-[minmax(18rem,1fr)] grid-flow-col gap-3 sm:gap-4 px-4 md:px-8"
-                        variants={containerVariants}
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true, amount: 0.2 }}
-                    >
-                        {imageItems.map((item) => (
-                            <motion.div
-                                key={item.id}
-                                variants={itemVariants}
-                                className={cn(
-                                    "group relative flex h-[16rem] sm:h-[20rem] w-[14rem] sm:w-[18rem] cursor-pointer items-end overflow-hidden rounded-2xl border border-secondary/20 p-3 sm:p-4 shadow-lg transition-shadow duration-300 ease-in-out hover:shadow-xl",
-                                    item.span,
-                                )}
-                                whileHover={{ scale: 1.02 }}
-                                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                                onClick={() => setSelectedItem(item)}
-                                onKeyDown={(e) => e.key === "Enter" && setSelectedItem(item)}
-                                tabIndex={0}
-                                aria-label={`View ${item.title}`}
-                            >
-                                <img
-                                    src={item.url}
-                                    alt={item.title}
-                                    loading="lazy"
-                                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                    style={{ minHeight: '100%', minWidth: '100%' }}
-                                />
-                                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-charcoal/80 via-charcoal/30 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-                                <div className="relative z-10 translate-y-4 opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
-                                    <h3 className="text-lg font-display font-bold text-white">{item.title}</h3>
-                                    <p className="mt-1 text-sm text-white/80">{item.desc}</p>
-                                </div>
-                            </motion.div>
-                        ))}
-                    </motion.div>
-                </motion.div>
+                    {imageItems.map((item, index) => (
+                        <motion.div
+                            key={item.id}
+                            variants={itemVariants}
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ once: true, amount: 0.3 }}
+                            className="group relative flex-shrink-0 h-[16rem] sm:h-[20rem] w-[14rem] sm:w-[18rem] cursor-pointer items-end overflow-hidden rounded-2xl border border-secondary/20 shadow-lg transition-shadow duration-300 ease-in-out hover:shadow-xl bg-gray-200"
+                            onClick={() => setSelectedItem(item)}
+                            tabIndex={0}
+                            aria-label={`View ${item.title}`}
+                        >
+                            <img
+                                src={item.url}
+                                alt={item.title}
+                                loading={index < 3 ? "eager" : "lazy"}
+                                className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                onError={(e) => {
+                                    const target = e.target as HTMLImageElement;
+                                    target.style.display = 'none';
+                                }}
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-charcoal/80 via-charcoal/20 to-transparent" />
+                            <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4">
+                                <h3 className="text-base sm:text-lg font-display font-bold text-white">{item.title}</h3>
+                                <p className="mt-1 text-xs sm:text-sm text-white/80">{item.desc}</p>
+                            </div>
+                        </motion.div>
+                    ))}
+                </div>
             </div>
 
             <AnimatePresence>
