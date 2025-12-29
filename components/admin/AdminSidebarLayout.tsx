@@ -158,12 +158,18 @@ const AdminSidebarLayout: React.FC<AdminSidebarLayoutProps> = ({ children }) => 
             </div>
 
             {/* Mobile Navigation */}
-            <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-charcoal z-50 flex justify-around py-2">
-                {navItems.slice(0, 5).map((item) => (
+            <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-charcoal z-50 flex justify-around py-2 px-1">
+                {[
+                    navItems[0], // Dashboard
+                    navItems[1], // Services
+                    navItems[4], // Gallery
+                    navItems[5], // Enquiries
+                    navItems[6], // Settings
+                ].map((item) => (
                     <Link
                         key={item.path}
                         href={item.path}
-                        className={`flex flex-col items-center py-2 px-3 rounded-lg transition-colors ${pathname === item.path
+                        className={`flex flex-col items-center py-2 px-2 rounded-lg transition-colors ${pathname === item.path
                             ? 'text-primary-light'
                             : 'text-gray-400'
                             }`}
