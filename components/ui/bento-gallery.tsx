@@ -173,7 +173,7 @@ const InteractiveImageBentoGallery: React.FC<InteractiveImageBentoGalleryProps> 
                                 key={item.id}
                                 variants={itemVariants}
                                 className={cn(
-                                    "group relative flex h-full min-h-[16rem] sm:min-h-[20rem] w-full min-w-[14rem] sm:min-w-[18rem] cursor-pointer items-end overflow-hidden rounded-2xl border border-secondary/20 p-3 sm:p-4 shadow-lg transition-shadow duration-300 ease-in-out hover:shadow-xl",
+                                    "group relative flex h-[16rem] sm:h-[20rem] w-[14rem] sm:w-[18rem] cursor-pointer items-end overflow-hidden rounded-2xl border border-secondary/20 p-3 sm:p-4 shadow-lg transition-shadow duration-300 ease-in-out hover:shadow-xl",
                                     item.span,
                                 )}
                                 whileHover={{ scale: 1.02 }}
@@ -186,7 +186,9 @@ const InteractiveImageBentoGallery: React.FC<InteractiveImageBentoGalleryProps> 
                                 <img
                                     src={item.url}
                                     alt={item.title}
+                                    loading="lazy"
                                     className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                    style={{ minHeight: '100%', minWidth: '100%' }}
                                 />
                                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-charcoal/80 via-charcoal/30 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
                                 <div className="relative z-10 translate-y-4 opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
