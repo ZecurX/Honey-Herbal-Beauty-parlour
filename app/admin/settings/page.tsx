@@ -19,6 +19,7 @@ export default function SettingsPage() {
         email: '',
         address: '',
         workingHours: '',
+        aboutText: '',
         instagramUrl: '',
         facebookUrl: ''
     });
@@ -41,6 +42,7 @@ export default function SettingsPage() {
                 email: settings.email || '',
                 address: settings.address || '',
                 workingHours: settings.workingHours || '',
+                aboutText: settings.aboutText || '',
                 instagramUrl: settings.socialLinks?.instagram || '',
                 facebookUrl: settings.socialLinks?.facebook || ''
             });
@@ -59,6 +61,7 @@ export default function SettingsPage() {
             email: formData.email,
             address: formData.address,
             workingHours: formData.workingHours,
+            aboutText: formData.aboutText,
             socialLinks: {
                 instagram: formData.instagramUrl,
                 facebook: formData.facebookUrl
@@ -138,6 +141,16 @@ export default function SettingsPage() {
                                 value={formData.address}
                                 onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                                 rows={2}
+                                className="w-full px-4 py-3 rounded-xl border border-secondary bg-bg-cream focus:ring-2 focus:ring-primary outline-none resize-none"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-charcoal mb-2">About Text</label>
+                            <textarea
+                                value={formData.aboutText}
+                                onChange={(e) => setFormData({ ...formData, aboutText: e.target.value })}
+                                rows={4}
                                 className="w-full px-4 py-3 rounded-xl border border-secondary bg-bg-cream focus:ring-2 focus:ring-primary outline-none resize-none"
                             />
                         </div>
