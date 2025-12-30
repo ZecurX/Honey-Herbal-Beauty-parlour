@@ -91,7 +91,7 @@ export async function PUT(req: Request) {
                 key: 'site_info',
                 value: siteInfo,
                 updated_at: new Date().toISOString()
-            });
+            }, { onConflict: 'key' });
 
         const { error: footerError } = await supabase
             .from('settings')
@@ -99,7 +99,7 @@ export async function PUT(req: Request) {
                 key: 'footer_content',
                 value: footerContent,
                 updated_at: new Date().toISOString()
-            });
+            }, { onConflict: 'key' });
 
         if (siteError || footerError) {
             console.error('Error updating settings:', siteError || footerError);
