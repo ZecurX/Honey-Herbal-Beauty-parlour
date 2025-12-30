@@ -8,14 +8,15 @@ import AdminSidebarLayout from '@/components/admin/AdminSidebarLayout';
 
 export default function PackagesManagementPage() {
     const { isAuthenticated } = useAuth();
-    const { packages, loading, addPackage, deletePackage, refreshPackages } = usePackages();
+    const { packages, loading, addPackage, updatePackage, deletePackage, refreshPackages } = usePackages();
     const router = useRouter();
 
     const [showAddForm, setShowAddForm] = useState(false);
+    const [editingId, setEditingId] = useState<string | null>(null);
     const [deletingId, setDeletingId] = useState<string | null>(null);
     const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const [newPackage, setNewPackage] = useState({
+    const [packageForm, setPackageForm] = useState({
         title: '',
         description: '',
         discount: '',
@@ -31,19 +32,45 @@ export default function PackagesManagementPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await addPackage({
-                title: newPackage.title,
-                description: newPackage.description,
-                discount: newPackage.discount || undefined,
-                validUntil: newPackage.validUntil || undefined
-            });
-            setNewPackage({ title: '', description: '', discount: '', validUntil: '' });
+            const packageData = {
+                title: packageForm.title,
+                description: packageForm.description,
+                discount: packageForm.discount || undefined,
+                validUntil: packageForm.validUntil || undefined
+            };
+
+            if (editingId) {
+                await updatePackage(editingId, packageData);
+            } else {
+                await addPackage(packageData);
+            }
+
+            setPackageForm({ title: '', description: '', discount: '', validUntil: '' });
             setShowAddForm(false);
+            setEditingId(null);
             refreshPackages();
         } catch (error) {
-            console.error('Failed to add package:', error);
-            setErrorMessage('Failed to add package. Please try again.');
+            console.error('Failed to save package:', error);
+            setErrorMessage(`Failed to ${editingId ? 'update' : 'add'} package. Please try again.`);
         }
+    };
+
+    const handleEditClick = (pkg: any) => {
+        setPackageForm({
+            title: pkg.title,
+            description: pkg.description,
+            discount: pkg.discount || '',
+            validUntil: pkg.validUntil ? new Date(pkg.validUntil).toISOString().split('T')[0] : ''
+        });
+        setEditingId(pkg.id);
+        setShowAddForm(true);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const handleCancelForm = () => {
+        setShowAddForm(false);
+        setEditingId(null);
+        setPackageForm({ title: '', description: '', discount: '', validUntil: '' });
     };
 
     const handleDeleteClick = (id: string) => {
@@ -84,7 +111,7 @@ export default function PackagesManagementPage() {
                         <p className="text-gray-light mt-1">Manage special offers and packages</p>
                     </div>
                     <button
-                        onClick={() => setShowAddForm(!showAddForm)}
+                        onClick={showAddForm ? handleCancelForm : () => setShowAddForm(true)}
                         className="btn-primary"
                     >
                         {showAddForm ? 'Cancel' : '+ Add Package'}
@@ -138,18 +165,20 @@ export default function PackagesManagementPage() {
                     </div>
                 )}
 
-                {/* Add Form */}
+                {/* Add/Edit Form */}
                 {showAddForm && (
                     <div className="bg-white rounded-2xl p-6 shadow-sm">
-                        <h2 className="font-display text-xl font-semibold text-charcoal mb-4">Add New Package</h2>
+                        <h2 className="font-display text-xl font-semibold text-charcoal mb-4">
+                            {editingId ? 'Edit Package' : 'Add New Package'}
+                        </h2>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-charcoal mb-2">Title</label>
                                     <input
                                         type="text"
-                                        value={newPackage.title}
-                                        onChange={(e) => setNewPackage({ ...newPackage, title: e.target.value })}
+                                        value={packageForm.title}
+                                        onChange={(e) => setPackageForm({ ...packageForm, title: e.target.value })}
                                         required
                                         className="w-full px-4 py-3 rounded-xl border border-secondary bg-bg-cream focus:ring-2 focus:ring-primary outline-none"
                                         placeholder="e.g., Bridal Package"
@@ -159,8 +188,8 @@ export default function PackagesManagementPage() {
                                     <label className="block text-sm font-medium text-charcoal mb-2">Discount</label>
                                     <input
                                         type="text"
-                                        value={newPackage.discount}
-                                        onChange={(e) => setNewPackage({ ...newPackage, discount: e.target.value })}
+                                        value={packageForm.discount}
+                                        onChange={(e) => setPackageForm({ ...packageForm, discount: e.target.value })}
                                         className="w-full px-4 py-3 rounded-xl border border-secondary bg-bg-cream focus:ring-2 focus:ring-primary outline-none"
                                         placeholder="e.g., 20% OFF"
                                     />
@@ -170,25 +199,34 @@ export default function PackagesManagementPage() {
                                 <label className="block text-sm font-medium text-charcoal mb-2">Valid Until</label>
                                 <input
                                     type="date"
-                                    value={newPackage.validUntil}
-                                    onChange={(e) => setNewPackage({ ...newPackage, validUntil: e.target.value })}
+                                    value={packageForm.validUntil}
+                                    onChange={(e) => setPackageForm({ ...packageForm, validUntil: e.target.value })}
                                     className="w-full px-4 py-3 rounded-xl border border-secondary bg-bg-cream focus:ring-2 focus:ring-primary outline-none"
                                 />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-charcoal mb-2">Description</label>
                                 <textarea
-                                    value={newPackage.description}
-                                    onChange={(e) => setNewPackage({ ...newPackage, description: e.target.value })}
+                                    value={packageForm.description}
+                                    onChange={(e) => setPackageForm({ ...packageForm, description: e.target.value })}
                                     required
                                     rows={3}
                                     className="w-full px-4 py-3 rounded-xl border border-secondary bg-bg-cream focus:ring-2 focus:ring-primary outline-none resize-none"
                                     placeholder="Describe the package..."
                                 />
                             </div>
-                            <button type="submit" className="btn-primary">
-                                Add Package
-                            </button>
+                            <div className="flex gap-3">
+                                <button type="submit" className="btn-primary">
+                                    {editingId ? 'Update Package' : 'Add Package'}
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={handleCancelForm}
+                                    className="px-6 py-3 rounded-full border border-secondary text-secondary hover:bg-secondary hover:text-white transition-all font-semibold"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
                         </form>
                     </div>
                 )}
@@ -212,13 +250,21 @@ export default function PackagesManagementPage() {
                                     )}
                                     <div className="flex justify-between items-start mb-2">
                                         <h3 className="font-semibold text-charcoal">{pkg.title}</h3>
-                                        <button
-                                            onClick={() => handleDeleteClick(pkg.id)}
-                                            disabled={deletingId === pkg.id}
-                                            className="text-red-500 hover:text-red-700 text-sm disabled:opacity-50"
-                                        >
-                                            {deletingId === pkg.id ? 'Deleting...' : 'Delete'}
-                                        </button>
+                                        <div className="flex gap-2">
+                                            <button
+                                                onClick={() => handleEditClick(pkg)}
+                                                className="text-primary hover:text-primary-dark text-sm font-medium"
+                                            >
+                                                Edit
+                                            </button>
+                                            <button
+                                                onClick={() => handleDeleteClick(pkg.id)}
+                                                disabled={deletingId === pkg.id}
+                                                className="text-red-500 hover:text-red-700 text-sm disabled:opacity-50"
+                                            >
+                                                {deletingId === pkg.id ? 'Deleting...' : 'Delete'}
+                                            </button>
+                                        </div>
                                     </div>
                                     <p className="text-sm text-gray-light mb-2 line-clamp-2">{pkg.description}</p>
                                     {pkg.validUntil && (

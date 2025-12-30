@@ -245,12 +245,12 @@ function StackedCircularFooter() {
                                 href={`mailto:${settings.email}`}
                                 className="group flex items-center p-5 bg-white/10 rounded-xl border border-secondary/20 hover:border-primary transition-all duration-300"
                             >
-                                <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mr-4 group-hover:bg-primary transition-colors">
+                                <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mr-4 shrink-0 group-hover:bg-primary transition-colors">
                                     <Mail className="w-5 h-5 text-secondary group-hover:text-white" />
                                 </div>
-                                <div>
+                                <div className="min-w-0 flex-1">
                                     <p className="text-xs text-white/60">Email</p>
-                                    <p className="font-medium text-white text-sm">{settings.email}</p>
+                                    <p className="font-medium text-white text-sm break-all">{settings.email}</p>
                                 </div>
                             </a>
 
